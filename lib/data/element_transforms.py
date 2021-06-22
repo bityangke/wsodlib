@@ -26,7 +26,7 @@ class Compose(nn.Module):
     def forward(
         self,
         element: WsodElement,
-    ) -> Tuple[Any, ...]:
+    ) -> WsodElement:
         for module in self._modules:
             element = module(element)
         return element
