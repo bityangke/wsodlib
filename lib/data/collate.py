@@ -16,7 +16,7 @@ def pad_norm_and_collate(
 ) -> WsodBatch:
     all_images, filenames, img_ids, image_labels = [], [], [], []
     original_sizes, image_sizes, proposals, objectness = [], [], [], []
-    max_size = torch.zeros(4, dtype=torch.int32)
+    max_size = torch.zeros(3, dtype=torch.int32)
 
     for element, _ in elements:
         all_images.append(norm(T.functional.to_tensor(element.image)))
