@@ -103,7 +103,7 @@ class ResizeSmallestEdge(nn.Module):
         max_ratio = self.max_size / max(element.image_size)
         ratio = min(min_ratio, max_ratio)
         new_size = (element.image_size * ratio).round().astype(element.image_size.dtype)
-        element.image = T.functional.resize(element.image, new_size)
+        element.image = T.functional.resize(element.image, new_size.tolist())
         if element.proposals is not None:
             element.proposals = element.proposals * ratio
         return element
@@ -148,7 +148,7 @@ class ResizeLargestEdge(nn.Module):
     ) -> WsodElement:
         ratio = self.size / max(element.image_size)
         new_size = (element.image_size * ratio).round().astype(element.image_size.dtype)
-        element.image = T.functional.resize(element.image, new_size)
+        element.image = T.functional.resize(element.image, new_size.tolist())
         if element.proposals is not None:
             element.proposals = element.proposals * ratio
         return element
