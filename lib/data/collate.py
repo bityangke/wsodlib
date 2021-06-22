@@ -27,7 +27,7 @@ def pad_norm_and_collate(
         image_sizes.append(torch.as_tensor(element.image_size))
         proposals.append(torch.as_tensor(element.proposals))
         objectness.append(torch.as_tensor(element.objectness))
-        max_size = torch.maximum(max_size, all_images[-1])
+        max_size = torch.maximum(max_size, torch.as_tensor(all_images[-1].size()))
     tensor_image_labels = torch.stack(image_labels)
     tensor_original_sizes = torch.stack(original_sizes)
     tensor_image_sizes = torch.stack(image_sizes)
