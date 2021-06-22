@@ -24,7 +24,7 @@ class GroupedBatchSampler(torch.utils.data.BatchSampler):
         self.sampler = sampler
         self.drop_last = drop_last
         self.hard_grouping = hard_grouping
-        self.buckets: List[List[WsodElement]] = [] * len(set(groups))
+        self.buckets: List[List[int]] = [] * len(set(groups))
 
     def __iter__(
         self,
@@ -36,7 +36,7 @@ class GroupedBatchSampler(torch.utils.data.BatchSampler):
                 yield self.buckets[group]
                 self.buckets[group] = []
 
-        leftovers: List[WsodElement] = []
+        leftovers: List[int] = []
         if not self.hard_grouping:  # yield suboptimally grouped batches at the end
             for group in range(len(self.buckets)):
                 leftovers = leftovers + self.buckets[group]
@@ -71,4 +71,4 @@ def compute_aspect_ratio_grouping(
     aspect_ratio_bounds: Tuple[float, ...] = (1.,)
 ) -> List[int]:
     return [bisect_right(aspect_ratio_bounds, element.image_size[0] / element.image_size[1])
-            for element in dataset]
+            for element, _ in dataset]
