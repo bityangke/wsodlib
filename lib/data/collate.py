@@ -1,4 +1,4 @@
-from typing import Callable, Optional, Sequence
+from typing import Callable, Optional, Sequence, Tuple
 
 import torch
 import torchvision.transforms as T
@@ -11,14 +11,14 @@ __all__ = ['pad_norm_and_collate', 'PadAndCollate']
 
 
 def pad_norm_and_collate(
-    elements: Sequence[WsodElement],
+    elements: Sequence[Tuple[WsodElement, None]],
     norm: Callable[[torch.Tensor], torch.Tensor] = lambda x: x
 ) -> WsodBatch:
     all_images, filenames, img_ids, image_labels = [], [], [], []
     original_sizes, image_sizes, proposals, objectness = [], [], [], []
     max_size = torch.zeros(4, dtype=torch.int32)
 
-    for element in elements:
+    for element, _ in elements:
         all_images.append(norm(T.functional.to_tensor(element.image)))
         filenames.append(element.filename)
         img_ids.append(element.img_id)
@@ -38,8 +38,8 @@ def pad_norm_and_collate(
 
     return WsodBatch(
         tensor_images,
-        filenames,
-        img_ids,
+        tuple(filenames),
+        tuple(img_ids),
         tensor_image_labels,
         tensor_original_sizes,
         tensor_image_sizes,
@@ -60,7 +60,7 @@ class PadAndCollate(nn.Module):
 
     def forward(
         self,
-        elements: Sequence[WsodElement],
+        elements: Sequence[Tuple[WsodElement, None]],
     ) -> WsodBatch:
         batch = pad_norm_and_collate(elements, self.norm)
         return self.batch_transforms(batch)
