@@ -25,11 +25,14 @@ class Compose(nn.Module):
 
     def forward(
         self,
-        element: WsodElement,
-    ) -> WsodElement:
+        *args: Tuple[Any, ...],
+    ) -> Tuple[WsodElement, None]:
         for module in self._modules:
-            element = module(element)
-        return element
+            if isinstance(args, WsodElement):
+                args = module(args)
+            else:
+                args = module(*args)
+        return args, None  # type: ignore
 
 
 class DropSmallProposals(nn.Module):
