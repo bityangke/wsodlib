@@ -14,6 +14,9 @@ __all__ = ['Wsddn', 'simple_wsddn_loss', 'spatial_wsddn_loss']
 
 
 class Wsddn(WsodModel):
+    """
+    Unverified implementation of WSDDN by Bilen and Vedaldi
+    """
     def __init__(
         self,
         backbone: nn.Module,

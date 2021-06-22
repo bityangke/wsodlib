@@ -12,6 +12,9 @@ from lib.utils.box_utils import compute_delta
 
 
 class Oicr(nn.Module):
+    """
+    Unverified implementation of OICR model by Tang et. al.
+    """
     def __init__(
         self,
         backbone: nn.Module,
