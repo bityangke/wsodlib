@@ -20,7 +20,7 @@ class Compose(nn.Module):
         self,
         *modules: nn.Module
     ):
-        self().__init__()
+        super().__init__()
         self._modules = modules
 
     def forward(
