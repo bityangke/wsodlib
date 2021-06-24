@@ -48,7 +48,7 @@ class Oicr(nn.Module):
         features = self.backbone(images)
         spp_features = self.pooler(features, proposals)
         if self.use_objectness:
-            spp_features = spp_features + torch.cat(objectness, 0)
+            spp_features = spp_features * torch.cat(objectness, 0).view(-1, 1, 1, 1)
         neck_features = self.neck(spp_features)
         proposal_counts = [len(p) for p in proposals]
         return [
