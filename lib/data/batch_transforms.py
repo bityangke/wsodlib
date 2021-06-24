@@ -1,3 +1,6 @@
+from typing import Optional, Sequence
+
+from numpy import random
 import torch
 from torch import nn
 from torchvision import transforms as T
@@ -61,3 +64,39 @@ class BatchResizeLargestEdge(nn.Module):
             if batch.proposals[i] is not None:
                 batch.proposals[i] = batch.proposals[i] * ratio  # type: ignore
         return batch
+
+
+class BatchRandomResizeSmallestEdge(BatchResizeSmallestEdge):
+    def __init__(
+        self,
+        sizes: Sequence[int] = [480, 576, 688, 864, 1200],
+        rng_seed: Optional[int] = None,
+    ):
+        super().__init__()
+        self.sizes = sizes
+        self._rng = random.default_rng(rng_seed)
+
+    def forward(
+        self,
+        batch: WsodBatch,
+    ) -> WsodBatch:
+        self.size = self._rng.choice(self.sizes)
+        return super().forward(batch)
+
+
+class BatchRandomResizeLargestEdge(BatchResizeLargestEdge):
+    def __init__(
+        self,
+        sizes: Sequence[int] = [480, 576, 688, 864, 1200],
+        rng_seed: Optional[int] = None,
+    ):
+        super().__init__()
+        self.sizes = sizes
+        self._rng = random.default_rng(rng_seed)
+
+    def forward(
+        self,
+        batch: WsodBatch,
+    ) -> WsodBatch:
+        self.size = self._rng.choice(self.sizes)
+        return super().forward(batch)
