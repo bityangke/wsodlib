@@ -1,6 +1,6 @@
 from typing import Any, Callable, Dict, Optional, Union
 
-from tqdm import tqdm
+from fastprogress.fastprogress import progress_bar
 import torch
 
 from lib.data.structures import WsodBatchLabels
@@ -25,7 +25,8 @@ def train_one_epoch(
         step_scheduler = _NoopScheduler()
 
     model.train()
-    pbar = tqdm(loader)
+    pbar = progress_bar(loader)
+    ema = 5.
     for batch, batch_labels in pbar:
         # forward pass
         batch = batch.to(device)
@@ -39,6 +40,10 @@ def train_one_epoch(
         optim.step()
         optim.zero_grad(True)
         step_scheduler.step()
+        
+        float_loss = loss.item()
+        ema = ema * 0.95 + float_loss * 0.05
+        pbar.comment = f'Loss: {float_loss:7.04f}, EMA: {ema:7.04f}'
 
 
 @torch.no_grad()
@@ -50,7 +55,7 @@ def val_one_epoch(
     device: Union[str, torch.device] = 'cuda:0'
 ) -> Dict[str, Any]:
     model.eval()
-    pbar = tqdm(loader)
+    pbar = progress_bar(loader)
     id_to_prediction = {}
     for batch in pbar:
         batch = batch.to(device)
