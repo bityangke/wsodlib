@@ -62,7 +62,7 @@ def val_one_epoch(
         batch = batch.to(device)
         labels = labels.to(device)
         predictions = model(batch.images, batch.proposals, batch.objectness)
-        postprocessed = [postprocess(prediction, os[0] / ns[0]) 
+        postprocessed = [postprocess(prediction, ns[0] / os[0]) 
                          for prediction, os, ns in zip(predictions, labels.original_sizes, batch.image_sizes)]
         for img_id, pp in zip(labels.img_ids, postprocessed):
             id_to_prediction[img_id] = pp
