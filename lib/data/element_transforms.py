@@ -5,7 +5,7 @@ from numpy import random
 from torch import nn
 from torchvision import transforms as T
 
-from lib.data.structures import WsodElement
+from lib.data.structures import WsodElement, WsodElementLabels
 
 
 __all__ = ['Compose', 'DropSmallProposals', 'RandomHorizontalFlip', 'RandomResizeSmallestEdge', 'ResizeLargestEdge', 
@@ -26,13 +26,10 @@ class Compose(nn.Module):
     def forward(
         self,
         *args: Tuple[Any, ...],
-    ) -> Tuple[WsodElement, None]:
+    ) -> Tuple[Any, ...]:
         for module in self._modules:
-            if isinstance(args, WsodElement):
-                args = module(args)
-            else:
-                args = module(*args)
-        return args, None  # type: ignore
+            args = module(*args)
+        return args
 
 
 class DropSmallProposals(nn.Module):
@@ -49,12 +46,13 @@ class DropSmallProposals(nn.Module):
     def forward(
         self,
         element: WsodElement,
-    ) -> WsodElement:
+        labels: WsodElementLabels,
+    ) -> Tuple[WsodElement, WsodElementLabels]:
         if element.proposals is not None:
             wh = element.proposals[..., 2:4] - element.proposals[..., 0:2]
             mask = (wh >= self.min_size).all(-1)
             element.proposals = element.proposals[mask]
-        return element
+        return element, labels
 
 
 class RandomHorizontalFlip(nn.Module):
@@ -72,13 +70,14 @@ class RandomHorizontalFlip(nn.Module):
 
     def forward(
         self,
-        element: WsodElement
-    ) -> WsodElement:
+        element: WsodElement,
+        labels: WsodElementLabels,
+    ) -> Tuple[WsodElement, WsodElementLabels]:
         if self._rng.random() < self.p:
             element.image = T.functional.hflip(element.image)
             if element.proposals is not None:
                 element.proposals[..., [0, 2]] = element.image_size[0] - element.proposals[..., [2, 0]] - 1
-        return element
+        return element, labels
 
 
 class ResizeSmallestEdge(nn.Module):
@@ -97,16 +96,20 @@ class ResizeSmallestEdge(nn.Module):
 
     def forward(
         self,
-        element: WsodElement
-    ) -> WsodElement:
+        element: WsodElement,
+        labels: WsodElementLabels,
+    ) -> Tuple[WsodElement, WsodElementLabels]:
         min_ratio = self.size / min(element.image_size)
         max_ratio = self.max_size / max(element.image_size)
         ratio = min(min_ratio, max_ratio)
+        
         new_size = (element.image_size * ratio).round().astype(element.image_size.dtype)
         element.image = T.functional.resize(element.image, new_size.tolist())
         if element.proposals is not None:
             element.proposals = element.proposals * ratio
-        return element
+        element.image_size = new_size
+        
+        return element, labels
 
 
 class RandomResizeSmallestEdge(ResizeSmallestEdge):
@@ -125,10 +128,11 @@ class RandomResizeSmallestEdge(ResizeSmallestEdge):
 
     def forward(
         self, 
-        element: WsodElement
-    ) -> WsodElement:
+        element: WsodElement,
+        labels: WsodElementLabels,
+    ) -> Tuple[WsodElement, WsodElementLabels]:
         self.size = self._rng.choice(self.sizes)
-        return super().forward(element)
+        return super().forward(element, labels)
 
 
 class ResizeLargestEdge(nn.Module):
@@ -144,11 +148,15 @@ class ResizeLargestEdge(nn.Module):
 
     def forward(
         self,
-        element: WsodElement
-    ) -> WsodElement:
+        element: WsodElement,
+        labels: WsodElementLabels,
+    ) -> Tuple[WsodElement, WsodElementLabels]:
         ratio = self.size / max(element.image_size)
+        
         new_size = (element.image_size * ratio).round().astype(element.image_size.dtype)
         element.image = T.functional.resize(element.image, new_size.tolist())
         if element.proposals is not None:
             element.proposals = element.proposals * ratio
-        return element
+        element.image_size = new_size
+        
+        return element, labels
