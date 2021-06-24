@@ -108,7 +108,7 @@ def postprocess(
 
     keep_idxs = ops.batched_nms(boxes, scores, klasses, nms_thresh)[:post_nms_max]
     return {
-        'scores': scores,
-        'boxes': boxes,
-        'labels': klasses,
+        'scores': scores[keep_idxs],
+        'boxes': boxes[keep_idxs],
+        'labels': klasses[keep_idxs],
     }

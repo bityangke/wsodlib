@@ -58,9 +58,12 @@ def val_one_epoch(
     model.eval()
     pbar = progress_bar(loader)
     id_to_prediction = {}
-    for batch in pbar:
+    for batch, labels in pbar:
         batch = batch.to(device)
+        labels = labels.to(device)
         predictions = model(batch.images, batch.proposals, batch.objectness)
-        postprocessed = postprocess(predictions)
-        id_to_prediction[batch.img_ids] = postprocessed
+        postprocessed = [postprocess(prediction, labels.original_size[0] / batch.image_size[0]) 
+                         for prediction in predictions]
+        for img_id, pp in zip(labels.img_ids, postprocessed):
+            id_to_prediction[img_id] = pp
     return eval_fn(id_to_prediction)
