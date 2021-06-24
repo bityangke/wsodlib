@@ -1,4 +1,4 @@
-from lib.data.structures import WsodBatch
+from lib.data.structures import WsodBatch, WsodBatchLabels
 from typing import Dict, List
 
 import torch
@@ -48,34 +48,36 @@ class Wsddn(WsodModel):
             {
                 'latent': nf,
                 'midn': self.head(nf),
+                'proposals': p,
             }
-            for nf in neck_features.split(proposal_counts, 0)
+            for nf, p in zip(neck_features.split(proposal_counts, 0), proposals)
         ]
 
 
 def simple_wsddn_loss(
     predictions: List[Dict[str, torch.Tensor]],
-    batch: WsodBatch,
+    labels: WsodBatchLabels,
 ) -> Dict[str, torch.Tensor]:
     image_level_predictions = torch.stack([p['midn'].sum(0) for p in predictions], 0)
     return {
-        'midn_loss': F.binary_cross_entropy(image_level_predictions, batch.image_labels, 
+        'midn_loss': F.binary_cross_entropy(image_level_predictions, labels.image_labels, 
                                             reduction='sum').div(image_level_predictions.size(0))
     }
 
 
 def spatial_wsddn_loss(
     predictions: List[Dict[str, torch.Tensor]],
-    batch: WsodBatch,
+    labels: WsodBatchLabels,
     tau: float = 0.6,
 ) -> Dict[str, torch.Tensor]:
-    loss_dict = simple_wsddn_loss(predictions, batch)
+    loss_dict = simple_wsddn_loss(predictions, labels)
     for i, prediction in enumerate(predictions):
-        klasses = batch.image_labels[i].nonzero()[:, 0]
+        klasses = labels.image_labels[i].nonzero()[:, 0]
+        
         top_scores, top_idxs = prediction['midn'][:, klasses].max(0)
-        top_boxes = batch.proposals[i][top_idxs]
+        top_boxes = prediction['proposals'][top_idxs]
         top_features = prediction['latent'][top_idxs]
-        max_overlaps, gt_assignment = ops.box_iou(batch.proposals[i], top_boxes).max(1)
+        max_overlaps, gt_assignment = ops.box_iou(prediction['proposals'], top_boxes).max(1)
         pos_mask = max_overlaps > tau
         assignment_weights = top_scores.gather(0, gt_assignment) ** 2
         gt_features = top_features[gt_assignment, :]

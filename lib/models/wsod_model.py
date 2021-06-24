@@ -13,7 +13,7 @@ class WsodModel(nn.Module, metaclass=abc.ABCMeta):
     def forward(
         self,
         images: torch.Tensor,
-        proposals: Optional[torch.Tensor],
-        objectness: Optional[torch.Tensor],
+        proposals: List[torch.Tensor],
+        objectness: List[torch.Tensor],
     ) -> List[Dict[str, torch.Tensor]]:
         pass

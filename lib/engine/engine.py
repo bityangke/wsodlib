@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict, Optional, Union
 from tqdm import tqdm
 import torch
 
-from lib.data.structures import WsodBatch
+from lib.data.structures import WsodBatchLabels
 from lib.models.wsod_model import WsodModel
 from lib.utils.loss_utils import reduce_loss_dict
 
@@ -15,7 +15,7 @@ class _NoopScheduler(torch.optim.lr_scheduler._LRScheduler):
 
 def train_one_epoch(
     model: WsodModel,
-    loss_fn: Callable[[Dict[str, torch.Tensor], WsodBatch], Dict[str, torch.Tensor]],
+    loss_fn: Callable[[Dict[str, torch.Tensor], WsodBatchLabels], Dict[str, torch.Tensor]],
     loader: torch.utils.data.DataLoader,
     optim: torch.optim.Optimizer,
     step_scheduler: Optional[torch.optim.lr_scheduler._LRScheduler] = None,
@@ -26,11 +26,12 @@ def train_one_epoch(
 
     model.train()
     pbar = tqdm(loader)
-    for batch in pbar:
+    for batch, batch_labels in pbar:
         # forward pass
         batch = batch.to(device)
+        batch_labels = batch_labels.to(device)
         predictions = model(batch.images, batch.proposals, batch.objectness)
-        loss_dict = loss_fn(predictions, batch)
+        loss_dict = loss_fn(predictions, batch_labels)
         loss = reduce_loss_dict(loss_dict)
 
         # backward pass

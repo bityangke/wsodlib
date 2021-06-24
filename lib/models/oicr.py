@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torch import nn
 from torchvision import ops
 
-from lib.data.structures import WsodBatch
+from lib.data.structures import WsodBatch, WsodBatchLabels
 from lib.layers.midn import MidnLayer
 from lib.models.wsddn import simple_wsddn_loss
 from lib.utils.box_utils import compute_delta
@@ -56,10 +56,11 @@ class Oicr(nn.Module):
                 'features': nf,
                 'midn': self.midn_head(nf),
                 'refinements': self.refinement_heads(nf).reshape(-1, self.k_refinements, self.num_classes+1),
-                'regression': self.regression_head(nf).reshape(-1, self.num_classes, 4) 
+                'regression': self.regression_head(nf).reshape(-1, self.num_classes, 4)
                 if self.regression_head is not None else None,
+                'proposals': p,
             }
-            for nf in neck_features.split(proposal_counts, 0)
+            for nf, p in zip(neck_features.split(proposal_counts, 0), proposals)
         ]
 
 
@@ -97,12 +98,13 @@ def max_pseudo_label(
 
 def oicr_loss(
     predictions: List[Dict[str, torch.Tensor]],
-    batch: WsodBatch,
+    labels: WsodBatchLabels,
 ) -> Dict[str, torch.Tensor]:
-    loss_dict = simple_wsddn_loss(predictions)
+    loss_dict = simple_wsddn_loss(predictions, labels)
     for i, prediction in enumerate(predictions):
-        klasses = batch.image_labels[i].nonzero()[:, 0]
-        gt_labels, label_weights, reg_delta_targets = max_pseudo_label(prediction, batch.proposals, klasses)
+        klasses = labels.image_labels[i].nonzero()[:, 0]
+        
+        gt_labels, label_weights, reg_delta_targets = max_pseudo_label(prediction, prediction['proposals'], klasses)
         loss_dict['refinement_loss'] = (loss_dict.get('refinement_loss', 0.) + 
                                         (label_weights.flatten() 
                                          * F.cross_entropy(prediction['refinements'].flatten(end_dim=1), 
