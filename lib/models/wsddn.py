@@ -87,3 +87,28 @@ def spatial_wsddn_loss(
                                     (assignment_weights[pos_mask] * (gt_features[pos_mask] - prediction['latent'][pos_mask])).sum() 
                                     / pos_mask.sum())
     return loss_dict
+
+
+def postprocess(
+    prediction: Dict[str, torch.Tensor],
+    rescale_factor: float = 1.,
+    nms_thresh: float = 0.4,
+    pre_nms_max: int = 1000,
+    post_nms_max: int = 100,
+) -> Dict[str, torch.Tensor]:
+    scores = prediction['midn']
+    boxes = (prediction['proposals'] / rescale_factor).repeat_interleave(scores.size(1), 0)
+    klasses = torch.arange(scores.size(1)).repeat(scores.size(0)).to(scores.device)
+    scores = scores.flatten()
+
+    sorted_idxs = scores.argsort(0, descending=True)[:pre_nms_max]
+    scores = scores[sorted_idxs]
+    boxes = boxes[sorted_idxs]
+    klasses = klasses[sorted_idxs]
+
+    keep_idxs = ops.batched_nms(boxes, scores, klasses, nms_thresh)[:post_nms_max]
+    return {
+        'scores': scores,
+        'boxes': boxes,
+        'labels': klasses,
+    }
