@@ -20,13 +20,14 @@ def train_one_epoch(
     optim: torch.optim.Optimizer,
     step_scheduler: Optional[torch.optim.lr_scheduler._LRScheduler] = None,
     device: Union[str, torch.device] = 'cuda:0',
+    ema_init: float = 1.
 ):
     if step_scheduler is None:
         step_scheduler = _NoopScheduler()
 
     model.train()
     pbar = progress_bar(loader)
-    ema = 5.
+    ema = ema_init
     for batch, batch_labels in pbar:
         # forward pass
         batch = batch.to(device)
