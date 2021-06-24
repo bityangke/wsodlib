@@ -54,11 +54,13 @@ class Wsddn(WsodModel):
         ]
 
 
+_EPS = 1e-8
+
 def simple_wsddn_loss(
     predictions: List[Dict[str, torch.Tensor]],
     labels: WsodBatchLabels,
 ) -> Dict[str, torch.Tensor]:
-    image_level_predictions = torch.stack([p['midn'].sum(0) for p in predictions], 0)
+    image_level_predictions = torch.stack([p['midn'].sum(0) for p in predictions], 0).clamp(_EPS, 1-_EPS)
     return {
         'midn_loss': F.binary_cross_entropy(image_level_predictions, labels.image_labels, 
                                             reduction='sum').div(image_level_predictions.size(0))
