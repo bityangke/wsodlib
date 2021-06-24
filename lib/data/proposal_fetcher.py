@@ -1,13 +1,11 @@
 from lib.data.structures import WsodElement
 import pickle
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Dict, Tuple
 
 import numpy as np
-import torch
-from PIL import Image
 from torch import nn
 
-from lib.data.structures import WsodElement
+from lib.data.structures import WsodElement, WsodElementLabels
 
 
 __all__ = ['ProposalFetcher']
@@ -40,7 +38,8 @@ class ProposalFetcher(nn.Module):
     def forward(
         self,
         element: WsodElement,
-    ) -> WsodElement:
-        element.proposals = self.proposal_dict[element.img_id].copy()
-        element.objectness = self.objectness_dict[element.img_id].copy()
-        return element
+        labels: WsodElementLabels,
+    ) -> Tuple[WsodElement, WsodElementLabels]:
+        element.proposals = self.proposal_dict[labels.img_id].copy()
+        element.objectness = self.objectness_dict[labels.img_id].copy()
+        return element, labels

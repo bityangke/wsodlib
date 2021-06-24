@@ -5,7 +5,7 @@ import torch
 from PIL import Image
 
 from lib.data.annotation_transform import DatasetAnnotationParser
-from lib.data.structures import WsodElement
+from lib.data.structures import WsodElement, WsodElementLabels
 
 
 __all__ = ['VOCWsodAnnotationParser']
@@ -35,7 +35,7 @@ class VOCWsodAnnotationParser(DatasetAnnotationParser):
         self,
         image: Image.Image,
         annotation: Dict[str, Any],
-    ) -> WsodElement:
+    ) -> Tuple[WsodElement, WsodElementLabels]:
         annotation = annotation['annotation']
 
         # Construct the image labels
@@ -46,13 +46,15 @@ class VOCWsodAnnotationParser(DatasetAnnotationParser):
         img_labels = np.zeros((20,), dtype=np.float32)
         img_labels[list(label_ids)] = 1.
 
-        element = WsodElement(
-            image,
-            annotation['filename'],
-            annotation['filename'][:-4],
-            img_labels,
-            np.array([int(annotation['size']['width']), int(annotation['size']['height'])]),
-            np.array([int(annotation['size']['width']), int(annotation['size']['height'])]),
+        return (
+            WsodElement(
+                image,
+                np.array([int(annotation['size']['width']), int(annotation['size']['height'])]),
+            ),
+            WsodElementLabels(
+                annotation['filename'],
+                annotation['filename'][:-4],
+                img_labels,
+                np.array([int(annotation['size']['width']), int(annotation['size']['height'])]),
+            )
         )
-
-        return element
