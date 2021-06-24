@@ -52,6 +52,7 @@ class DropSmallProposals(nn.Module):
             wh = element.proposals[..., 2:4] - element.proposals[..., 0:2]
             mask = (wh >= self.min_size).all(-1)
             element.proposals = element.proposals[mask]
+            element.objectness = element.objectness[mask]  # type: ignore
         return element, labels
 
 
