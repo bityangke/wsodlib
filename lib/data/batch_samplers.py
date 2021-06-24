@@ -24,7 +24,7 @@ class GroupedBatchSampler(torch.utils.data.BatchSampler):
         self.sampler = sampler
         self.drop_last = drop_last
         self.hard_grouping = hard_grouping
-        self.buckets: List[List[int]] = [[]] * len(set(groups))
+        self.buckets: List[List[int]] = [[] for _ in range(len(set(groups)))]
 
     def __iter__(
         self,
