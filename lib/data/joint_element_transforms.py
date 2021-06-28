@@ -3,7 +3,6 @@ from typing import Sequence, Tuple, Optional
 from numpy import random
 from PIL import Image
 from torch import nn
-from torchvision import transforms as T
 
 from lib.data.structures import WsodElement, WsodElementLabels
 
@@ -11,7 +10,7 @@ from lib.data.structures import WsodElement, WsodElementLabels
 class RandomResizeSmallestEdge(nn.Module):
     def __init__(
         self,
-        sizes: int = [480, 576, 688, 864, 1200],
+        sizes: Sequence[int] = [480, 576, 688, 864, 1200],
         max_size: int = 2000,
         rng_seed: Optional[int] = None
     ):
@@ -43,7 +42,7 @@ class RandomResizeSmallestEdge(nn.Module):
 class RandomResizeLargestEdge(nn.Module):
     def __init__(
         self,
-        sizes: int = [480, 576, 688, 864, 1200],
+        sizes: Sequence[int] = [480, 576, 688, 864, 1200],
         rng_seed: Optional[int] = None
     ):
         super().__init__()
