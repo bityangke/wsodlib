@@ -70,17 +70,15 @@ class BatchRandomResizeSmallestEdge(BatchResizeSmallestEdge):
     def __init__(
         self,
         sizes: Sequence[int] = [480, 576, 688, 864, 1200],
-        rng_seed: Optional[int] = None,
     ):
         super().__init__()
         self.sizes = sizes
-        self._rng = random.default_rng(rng_seed)
 
     def forward(
         self,
         batch: WsodBatch,
     ) -> WsodBatch:
-        self.size = self._rng.choice(self.sizes)
+        self.size = random.choice(self.sizes)
         return super().forward(batch)
 
 
@@ -88,15 +86,13 @@ class BatchRandomResizeLargestEdge(BatchResizeLargestEdge):
     def __init__(
         self,
         sizes: Sequence[int] = [480, 576, 688, 864, 1200],
-        rng_seed: Optional[int] = None,
     ):
         super().__init__()
         self.sizes = sizes
-        self._rng = random.default_rng(rng_seed)
 
     def forward(
         self,
         batch: WsodBatch,
     ) -> WsodBatch:
-        self.size = self._rng.choice(self.sizes)
+        self.size = random.choice(self.sizes)
         return super().forward(batch)

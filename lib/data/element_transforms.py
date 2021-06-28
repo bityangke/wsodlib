@@ -63,18 +63,16 @@ class RandomHorizontalFlip(nn.Module):
     def __init__(
         self,
         p: float = 0.5,
-        rng_seed: Optional[int] = None,
     ):
         super().__init__()
         self.p = p
-        self._rng = random.default_rng(rng_seed)
 
     def forward(
         self,
         element: WsodElement,
         labels: WsodElementLabels,
     ) -> Tuple[WsodElement, WsodElementLabels]:
-        if self._rng.random() < self.p:
+        if random.random() < self.p:
             element.image = T.functional.hflip(element.image)
             if element.proposals is not None:
                 element.proposals[..., [0, 2]] = element.image_size[0] - element.proposals[..., [2, 0]] - 1
@@ -121,18 +119,16 @@ class RandomResizeSmallestEdge(ResizeSmallestEdge):
         self,
         sizes: Sequence[int],
         max_size: int = 2000,
-        rng_seed: int = None,
     ):
         super().__init__(sizes[0], max_size)
         self.sizes = sizes
-        self._rng = random.default_rng(rng_seed)
 
     def forward(
         self, 
         element: WsodElement,
         labels: WsodElementLabels,
     ) -> Tuple[WsodElement, WsodElementLabels]:
-        self.size = self._rng.choice(self.sizes)
+        self.size = random.choice(self.sizes)
         return super().forward(element, labels)
 
 
