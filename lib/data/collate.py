@@ -58,15 +58,20 @@ class PadAndCollate(nn.Module):
     def __init__(
         self,
         norm: Callable[[torch.Tensor], torch.Tensor] = lambda x: x,
+        joint_element_transforms: Optional[Callable[[Sequence[Tuple[WsodElement, WsodElementLabels]]], 
+                                                    Sequence[Tuple[WsodElement, WsodElementLabels]]]] = None,
         batch_transforms: Optional[Callable[[WsodBatch], WsodBatch]] = None,
     ):
         super().__init__()
         self.norm = norm
+        self.joint_element_transforms = (joint_element_transforms 
+                                         if joint_element_transforms is not None else lambda x: x)
         self.batch_transforms = batch_transforms if batch_transforms is not None else lambda x: x
 
     def forward(
         self,
         elements_and_labels: Sequence[Tuple[WsodElement, WsodElementLabels]],
     ) -> Tuple[WsodBatch, WsodBatchLabels]:
+        elements_and_labels = self.joint_element_transforms(elements_and_labels)
         batch, batch_labels = pad_norm_and_collate(elements_and_labels, self.norm)
         return self.batch_transforms(batch), batch_labels
