@@ -57,7 +57,7 @@ class RandomResizeLargestEdge(nn.Module):
         resized_elements_and_labels = []
         for (element, label) in elements_and_labels:
             ratio = size / element.image_size.max()
-            new_size = (ratio * size).round().astype(int)
+            new_size = (ratio * element.image_size).round().astype(int)
             
             element.image = element.image.resize(new_size, resample=Image.BILINEAR)
             if element.proposals is not None:
