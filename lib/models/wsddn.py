@@ -84,7 +84,8 @@ def spatial_wsddn_loss(
         assignment_weights = top_scores.gather(0, gt_assignment) ** 2
         gt_features = top_features[gt_assignment, :]
         loss_dict['sp_reg_loss'] = (loss_dict.get('sp_reg_loss', 0.) + 
-                                    (assignment_weights[pos_mask] * (gt_features[pos_mask] - prediction['latent'][pos_mask])).sum() 
+                                    (assignment_weights[pos_mask] 
+                                     * (gt_features[pos_mask] - prediction['latent'][pos_mask]).pow(2).sum(1)).sum() 
                                     / pos_mask.sum())
     return loss_dict
 
