@@ -65,7 +65,7 @@ class PadAndCollate(nn.Module):
         super().__init__()
         self.norm = norm
         self.joint_element_transforms = (joint_element_transforms 
-                                         if joint_element_transforms is not None else lambda x: x)
+                                         if joint_element_transforms is not None else lambda *x: x)
         self.batch_transforms = batch_transforms if batch_transforms is not None else lambda x: x
 
     def forward(
