@@ -8,7 +8,8 @@ from torchvision import transforms as T
 from wsodlib.data.structures import WsodBatch
 
 
-__all__ = ['BatchResizeLargestEdge', 'BatchResizeSmallestEdge']
+__all__ = ['BatchResizeLargestEdge', 'BatchResizeSmallestEdge', 'BatchRandomResizeLargestEdge',
+           'BatchRandomResizeSmallestEdge']
 
 
 class BatchResizeSmallestEdge(nn.Module):

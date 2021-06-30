@@ -8,6 +8,9 @@ from wsodlib.models.wsod_model import WsodModel
 from wsodlib.utils.loss_utils import reduce_loss_dict
 
 
+__all__ = ['train_one_epoch', 'val_one_epoch']
+
+
 class _NoopScheduler(torch.optim.lr_scheduler._LRScheduler):
     def __init__(self): pass
     def step(self, *args, **kwargs): pass

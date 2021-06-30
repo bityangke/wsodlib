@@ -7,6 +7,9 @@ from torch import nn
 from wsodlib.data.structures import WsodElement, WsodElementLabels
 
 
+__all__ = ['RandomResizeSmallestEdge', 'RandomResizeLargestEdge']
+
+
 class RandomResizeSmallestEdge(nn.Module):
     def __init__(
         self,

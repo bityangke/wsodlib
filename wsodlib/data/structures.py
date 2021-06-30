@@ -8,7 +8,7 @@ import torch
 from PIL import Image
 
 
-__all__ = ['WsodBatch', 'WsodElement']
+__all__ = ['WsodBatch', 'WsodBatchLabels', 'WsodElement', 'WsodElementLabels']
 
 
 @dataclass
