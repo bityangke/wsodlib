@@ -8,6 +8,9 @@ __all__ = ['MultiHeadAttention', 'MultiHeadSelfAttention', 'Residual']
 
 
 class MultiHeadAttention(nn.Module):
+    """
+    Based heavily on the implementation at https://github.com/rwightman/pytorch-image-models
+    """
     def __init__(
         self,
         dimension: int,

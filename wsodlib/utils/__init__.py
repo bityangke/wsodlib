@@ -1,1 +1,1 @@
-from wsodlib.utils import box_utils, loss_utils
+from wsodlib.utils import box_utils
