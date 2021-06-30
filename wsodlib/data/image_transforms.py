@@ -3,7 +3,7 @@ from typing import Union
 from torch import nn
 from torchvision import transforms as T
 
-from lib.data.structures import WsodBatch, WsodElement
+from wsodlib.data.structures import WsodBatch, WsodElement
 
 
 __all__ = ['AutoAugment']

@@ -5,10 +5,10 @@ import torch.nn.functional as F
 from torch import nn
 from torchvision import ops
 
-from lib.data.structures import WsodBatch, WsodBatchLabels
-from lib.layers.midn import MidnLayer
-from lib.models.wsddn import simple_wsddn_loss
-from lib.utils.box_utils import compute_delta
+from wsodlib.data.structures import WsodBatch, WsodBatchLabels
+from wsodlib.layers.midn import MidnLayer
+from wsodlib.models.wsddn import simple_wsddn_loss
+from wsodlib.utils.box_utils import compute_delta
 
 
 class Oicr(nn.Module):

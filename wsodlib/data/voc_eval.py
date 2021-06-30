@@ -20,7 +20,7 @@ import torch
 if __name__ == '__main__':
     from voc_annotation import _LABELS
 else:
-    from lib.data.voc_annotation import _LABELS
+    from wsodlib.data.voc_annotation import _LABELS
 
 __all__ = ['run_evaluation', 'parse_rec', 'voc_ap', 'voc_eval', 'get_voc_test_aps']
 

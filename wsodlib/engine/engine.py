@@ -3,9 +3,9 @@ from typing import Any, Callable, Dict, Optional, Union
 from fastprogress.fastprogress import progress_bar
 import torch
 
-from lib.data.structures import WsodBatchLabels
-from lib.models.wsod_model import WsodModel
-from lib.utils.loss_utils import reduce_loss_dict
+from wsodlib.data.structures import WsodBatchLabels
+from wsodlib.models.wsod_model import WsodModel
+from wsodlib.utils.loss_utils import reduce_loss_dict
 
 
 class _NoopScheduler(torch.optim.lr_scheduler._LRScheduler):

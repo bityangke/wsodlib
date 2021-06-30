@@ -4,7 +4,7 @@ from numpy import random
 from PIL import Image
 from torch import nn
 
-from lib.data.structures import WsodElement, WsodElementLabels
+from wsodlib.data.structures import WsodElement, WsodElementLabels
 
 
 class RandomResizeSmallestEdge(nn.Module):

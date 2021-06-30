@@ -1,4 +1,4 @@
-from lib.data.structures import WsodBatch, WsodBatchLabels
+from wsodlib.data.structures import WsodBatch, WsodBatchLabels
 from typing import Dict, List
 
 import torch
@@ -6,8 +6,8 @@ import torch.nn.functional as F
 from torch import nn
 from torchvision import ops
 
-from lib.layers.midn import MidnLayer
-from lib.models.wsod_model import WsodModel
+from wsodlib.layers.midn import MidnLayer
+from wsodlib.models.wsod_model import WsodModel
 
 
 __all__ = ['Wsddn', 'simple_wsddn_loss', 'spatial_wsddn_loss']

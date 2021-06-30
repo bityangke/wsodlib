@@ -1,11 +1,11 @@
-from lib.data.structures import WsodElement
+from wsodlib.data.structures import WsodElement
 import pickle
 from typing import Any, Dict, Tuple
 
 import numpy as np
 from torch import nn
 
-from lib.data.structures import WsodElement, WsodElementLabels
+from wsodlib.data.structures import WsodElement, WsodElementLabels
 
 
 __all__ = ['ProposalFetcher']

@@ -1,11 +1,11 @@
-from lib.data.structures import WsodElement
+from wsodlib.data.structures import WsodElement
 from typing import Any, Optional, Sequence, Tuple
 
 from numpy import random
 from torch import nn
 from torchvision import transforms as T
 
-from lib.data.structures import WsodElement, WsodElementLabels
+from wsodlib.data.structures import WsodElement, WsodElementLabels
 
 
 __all__ = ['Compose', 'DropSmallProposals', 'RandomHorizontalFlip', 'RandomResizeSmallestEdge', 'ResizeLargestEdge', 

@@ -4,8 +4,8 @@ import numpy as np
 import torch
 from PIL import Image
 
-from lib.data.annotation_transform import DatasetAnnotationParser
-from lib.data.structures import WsodElement, WsodElementLabels
+from wsodlib.data.annotation_transform import DatasetAnnotationParser
+from wsodlib.data.structures import WsodElement, WsodElementLabels
 
 
 __all__ = ['VOCWsodAnnotationParser']

@@ -4,7 +4,7 @@ import torch
 import torchvision.transforms as T
 from torch import nn
 
-from lib.data.structures import WsodBatch, WsodBatchLabels, WsodElement, WsodElementLabels
+from wsodlib.data.structures import WsodBatch, WsodBatchLabels, WsodElement, WsodElementLabels
 
 
 __all__ = ['pad_norm_and_collate', 'PadAndCollate']

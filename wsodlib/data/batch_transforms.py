@@ -5,7 +5,7 @@ import torch
 from torch import nn
 from torchvision import transforms as T
 
-from lib.data.structures import WsodBatch
+from wsodlib.data.structures import WsodBatch
 
 
 __all__ = ['BatchResizeLargestEdge', 'BatchResizeSmallestEdge']

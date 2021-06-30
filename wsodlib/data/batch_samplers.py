@@ -3,7 +3,7 @@ from typing import Iterator, List, Sequence, Tuple
 
 import torch
 
-from lib.data.structures import WsodElement
+from wsodlib.data.structures import WsodElement
 
 
 __all__ = ['GroupedBatchSampler', 'compute_aspect_ratio_grouping']
